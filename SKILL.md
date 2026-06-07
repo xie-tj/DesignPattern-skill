@@ -30,12 +30,12 @@ When the user provides `$ARGUMENTS`, parse it as follows:
   - `hard` → multi-pattern composition + design trade-offs
 - Otherwise → **Default Mode**: diagnose problems and provide refactored code
 
-### 输入边界处理
+### Input Edge Cases
 
-- **无代码、只有模式名**（如"策略模式"）→ 给出模式定义、适用场景、代码示例
-- **超长代码 (>200行)** → 自动聚焦到最可能违反原则的代码段
-- **用户粘贴的代码不是设计模式问题**（如算法、性能、并发问题）→ 明确告知"这不是设计模式问题"，不强行套模式
-- **用户说"直接给答案"** → 跳过分析过程，直接给出重构代码
+- **No code, only a pattern name** (e.g. "Strategy") → provide pattern definition, use cases, and code examples
+- **Very long code (>200 lines)** → auto-focus on the section most likely violating principles
+- **Code is not a design pattern problem** (e.g. algorithm, performance, concurrency) → state clearly "this is not a design pattern issue" and don't force-fit a pattern
+- **User says "just give me the answer"** → skip analysis, provide refactored code directly
 
 ## Default Mode
 
@@ -47,13 +47,13 @@ Analyze the code/scenario for these **code smells**:
 
 | Smell | Violated Principle | Signal |
 |---|---|---|
-| God class doing everything | SRP (单一职责) | One class has multiple unrelated responsibilities |
-| Adding features by modifying existing code | OCP (开放-封闭) | `if-else` or `switch` grows with each new requirement |
-| Subclass breaks parent behavior | LSP (里氏代换) | Override makes parent contract invalid |
-| Depending on concrete classes | DIP (依赖倒转) | `new ConcreteClass()` scattered everywhere |
-| Knowing too much about others | LoD (迪米特) | Chain calls like `a.getB().getC().doSomething()` |
-| Fat interfaces | ISP (接口隔离) | Implementing methods you don't need |
-| Inheritance abuse over composition | CRP (合成/聚合复用) | Subclass explosion, deep inheritance hierarchy |
+| God class doing everything | SRP (Single Responsibility) | One class has multiple unrelated responsibilities |
+| Adding features by modifying existing code | OCP (Open-Closed) | `if-else` or `switch` grows with each new requirement |
+| Subclass breaks parent behavior | LSP (Liskov Substitution) | Override makes parent contract invalid |
+| Depending on concrete classes | DIP (Dependency Inversion) | `new ConcreteClass()` scattered everywhere |
+| Knowing too much about others | LoD (Law of Demeter) | Chain calls like `a.getB().getC().doSomething()` |
+| Fat interfaces | ISP (Interface Segregation) | Implementing methods you don't need |
+| Inheritance abuse over composition | CRP (Composite Reuse) | Subclass explosion, deep inheritance hierarchy |
 | Repeated conditional logic | Strategy/State candidate | Same `if-else` pattern in multiple places |
 | Tight coupling to creation logic | Factory candidate | `new` with complex construction logic |
 | One-to-many notification needs | Observer candidate | Manual polling or callback spaghetti |
@@ -66,40 +66,40 @@ Analyze the code/scenario for these **code smells**:
 Based on the diagnosis, recommend the best-fit pattern with a **fit score** (1-5 stars):
 
 ```
-推荐模式: ★★★★★ 策略模式 (Strategy)
-替代方案: ★★★★☆ 状态模式 (State) — 如果行为随状态变化
+Recommended: ★★★★★ Strategy
+Alternative: ★★★★☆ State — if behavior changes with internal state
 ```
 
 For each recommendation, briefly explain:
 - **Why this pattern** — what specific problem it solves here
 - **Why not the alternative** — what makes it less fitting
 
-> **Fit Score**: 5=完美匹配, 4=可用有替代, 3=可以用但有局限, 2=勉强, 1=不适合
+> **Fit Score**: 5=perfect match, 4=good with alternatives, 3=usable with limitations, 2=barely fits, 1=wrong choice
 
 ### Step 3: Provide Refactored Code
 
 Show the refactoring result with brief annotations:
 
 ```
-【原代码问题】一句话说明
-（关键问题代码片段）
+【Problem】one-sentence summary
+(key problematic code snippet)
 
-【重构后】应用（模式名）
-（完整重构代码）
+【Refactored】applies (Pattern Name)
+(full refactored code)
 
-结构说明: （用文字描述类之间的关系）
+Structure: (describe class relationships in words)
 ```
 
 ### Step 4: Pattern Summary
 
 ```
-━━━ 模式卡片 ━━━
-模式名: （中文名）（English Name）
-类型: 创建型 / 结构型 / 行为型
-一句话: ...
-适用场景: ①... ②... ③...
-易混淆: （模式名） — 区别在于...
-━━━━━━━━━━━━━━
+━━━ Pattern Card ━━━
+Name: (Pattern Name)
+Category: Creational / Structural / Behavioral
+Intent: ...
+Use cases: ①... ②... ③...
+Often confused with: (Pattern Name) — the difference is...
+━━━━━━━━━━━━━━━━━━
 ```
 
 ## Identify Mode (`--mode=identify`)
@@ -109,49 +109,49 @@ When the user pastes code with `--mode=identify`:
 1. Read the code carefully
 2. List all design patterns detected, with confidence level:
    ```
-   检测到的设计模式:
-   ✅ 策略模式 (Strategy) — 高置信度 — 在 CashContext 中看到了算法族的封装
-   ⚠️ 工厂模式 (Factory) — 中置信度 — 创建逻辑可能暗含工厂
+   Detected patterns:
+   ✅ Strategy — high confidence — saw algorithm family encapsulation in CashContext
+   ⚠️ Factory — medium confidence — creation logic may imply a factory
    ```
 3. List all OO principles being followed or violated
 4. If violations found, provide refactored code
 
-### 输出模板
+### Output Template
 
-1. **检测到的模式**（置信度：高/中/低）— 如有
-2. **违反的设计原则** — 如有
-3. **修复方案**（按影响排序）：
-   - 问题 → 建议的模式/原则 → 重构代码
-4. **模式使用正确性**（仅当检测到模式时）：使用是否正确、是否有更好的变体
+1. **Detected patterns** (confidence: high/medium/low) — if any
+2. **Violated design principles** — if any
+3. **Fix proposals** (ordered by impact):
+   - Problem → Recommended pattern/principle → Refactored code
+4. **Pattern usage correctness** (only when a pattern is detected): Is it used correctly? Is there a better variant?
 
-> **语言规范**：当未检测到任何模式时，不要说"未检测到设计模式"，改为："当前代码没有使用设计模式，但存在以下可改进点——[具体问题和修复方向]"
+> **Language rule**: When no patterns are detected, don't say "no design patterns found". Instead say: "The code doesn't use any design patterns yet, but here are improvement opportunities — [specific problems and fix directions]"
 
 ## Compare Mode (`--mode=compare`)
 
 When the user asks to compare two patterns:
 
-1. **先问场景**："你遇到的具体问题是什么？"
-2. **给对比表**：从下方"内置对比指南"中加载对应模式对的对比表
-3. **给决策树**：帮助用户根据场景做出选择
-4. **用代码说话**：给出"同一场景、两种实现"的代码对比
+1. **Ask for context first**: "What specific problem are you trying to solve?"
+2. **Provide comparison table**: Load the matching pattern pair from the built-in comparison guides below
+3. **Give a decision tree**: Help the user choose based on their scenario
+4. **Show code**: Provide "same scenario, two implementations" code comparison
 
 Present a structured comparison table:
 
 ```
-┌─────────────┬──────────────────┬──────────────────┐
-│   维度       │  模式A            │  模式B            │
-├─────────────┼──────────────────┼──────────────────┤
-│ 一句话定义   │ ...              │ ...              │
-│ 核心意图     │ ...              │ ...              │
-│ 类结构       │ ...              │ ...              │
-│ 关键区别     │ ...              │ ...              │
-│ 适用场景     │ ...              │ ...              │
-│ 生活类比     │ ...              │ ...              │
-│ 代码信号     │ 什么代码暗示用它  │ 什么代码暗示用它  │
-└─────────────┴──────────────────┴──────────────────┘
+┌─────────────────┬──────────────────┬──────────────────┐
+│   Dimension      │  Pattern A       │  Pattern B       │
+├─────────────────┼──────────────────┼──────────────────┤
+│ One-liner        │ ...              │ ...              │
+│ Core intent      │ ...              │ ...              │
+│ Class structure  │ ...              │ ...              │
+│ Key difference   │ ...              │ ...              │
+│ Use cases        │ ...              │ ...              │
+│ Real-world analogy│ ...             │ ...              │
+│ Code signal      │ What code hints at it │ What code hints at it │
+└─────────────────┴──────────────────┴──────────────────┘
 ```
 
-Then give a **decision guide**: "如果你的场景是...，选A；如果是...，选B。"
+Then give a **decision guide**: "If your scenario is X, pick A; if Y, pick B."
 
 ## Quiz Mode (`--mode=quiz`)
 
@@ -159,269 +159,269 @@ Generate a scenario-based quiz:
 
 1. Present a **scenario** with **bad code** (20-40 lines)
 2. Ask 3 questions:
-   - Q1: 这段代码违反了什么原则？
-   - Q2: 应该用什么设计模式？为什么？
-   - Q3: 请写出重构后的核心代码
+   - Q1: What design principle does this code violate?
+   - Q2: Which design pattern should be applied? Why?
+   - Q3: Write the refactored core code
 3. Wait for user's answer before revealing the solution
 4. Score the answer
 
-### 评分标准 (总分 10)
+### Scoring (10 points total)
 
-| 问题 | 分值 | 评分维度 |
+| Question | Points | Dimensions |
 |---|---|---|
-| Q1: 违反了什么原则？ | 3 分 | 正确识别 2 分 + 解释原因 1 分 |
-| Q2: 该用什么模式？ | 3 分 | 正确识别 2 分 + 说明选择理由 1 分 |
-| Q3: 写出重构代码 | 4 分 | 可运行 2 分 + 结构清晰 1 分 + 符合模式 1 分 |
+| Q1: What principle is violated? | 3 pts | Correct identification (2) + explanation (1) |
+| Q2: Which pattern to apply? | 3 pts | Correct identification (2) + rationale (1) |
+| Q3: Refactored code | 4 pts | Compiles/runs (2) + clean structure (1) + matches pattern intent (1) |
 
-### 难度分级
+### Difficulty Levels
 
-- `easy` → 15-20 行代码，明显的单一问题
-- 默认中等 → 20-30 行代码，单一模式
-- `hard` → 30-40 行代码，多模式组合 + 设计权衡
+- `easy` → 15-20 lines of code, obvious single issue
+- default medium → 20-30 lines, single pattern
+- `hard` → 30-40 lines, multi-pattern composition + design trade-offs
 
-### 答错处理
+### Wrong Answer Handling
 
-- 第一次答错 → 给提示，不直接给答案："再想想，这里违反的不是 SRP，而是另一个原则..."
-- 第二次答错 → 给出正确答案并解释
+- First wrong answer → give a hint, not the answer: "Think again — the violated principle isn't SRP, it's another one..."
+- Second wrong answer → reveal the correct answer with explanation
 
 ---
 
 ## Recommended Learning Roadmap
 
-按优先级分组，建议按组内顺序学习：
+Grouped by priority, learn in order within each group:
 
-**第一组：核心四模式（必学）**
-1. Strategy 策略 — 理解"封装变化"
-2. Observer 观察者 — 理解"松散耦合"
-3. Factory Method 工厂方法 — 理解"依赖倒转"
-4. Decorator 装饰 — 理解"开放封闭"
+**Group 1: Core Four (must-learn)**
+1. Strategy — understand "encapsulate what varies"
+2. Observer — understand "loose coupling"
+3. Factory Method — understand "depend on abstractions"
+4. Decorator — understand "open for extension, closed for modification"
 
-**第二组：常用结构模式**
-5. Adapter 适配器
-6. Facade 外观
-7. Template Method 模板方法
-8. Composite 组合
+**Group 2: Common Structural Patterns**
+5. Adapter
+6. Facade
+7. Template Method
+8. Composite
 
-**第三组：创建型进阶**
-9. Abstract Factory 抽象工厂
-10. Builder 建造者
-11. Singleton 单例
-12. Prototype 原型
+**Group 3: Creational Advanced**
+9. Abstract Factory
+10. Builder
+11. Singleton
+12. Prototype
 
-**第四组：行为型进阶**
-13. State 状态
-14. Command 命令
-15. Chain of Responsibility 职责链
-16. Mediator 中介者
-17. Memento 备忘录
+**Group 4: Behavioral Advanced**
+13. State
+14. Command
+15. Chain of Responsibility
+16. Mediator
+17. Memento
 
-**第五组：高级模式（按需学习）**
-18. Proxy 代理
-19. Bridge 桥接
-20. Flyweight 享元
-21. Visitor 访问者
-22. Iterator 迭代器
-23. Interpreter 解释器
+**Group 5: Advanced Patterns (learn as needed)**
+18. Proxy
+19. Bridge
+20. Flyweight
+21. Visitor
+22. Iterator
+23. Interpreter
 
 ---
 
-## OO 设计原则
+## OO Design Principles
 
-| 原则 | 一句话 | 违反信号 |
+| Principle | One-liner | Violation Signal |
 |---|---|---|
-| SRP 单一职责 | 一个类只应该有一个引起它变化的原因 | 一个类做多件不相关的事 |
-| OCP 开放-封闭 | 对扩展开放，对修改封闭 | 每次加功能都要改已有代码 |
-| LSP 里氏代换 | 子类必须能替换父类而不破坏程序 | 子类 override 后行为与父类契约矛盾 |
-| DIP 依赖倒转 | 高层和低层都依赖抽象；抽象不依赖细节 | 高层模块直接 `new` 低层模块；修改低层导致高层编译失败 |
-| LoD 迪米特 | 最少知识原则，只与直接朋友通信 | `a.getB().getC().doD()` 链式调用 |
-| ISP 接口隔离 | 不应该强迫客户依赖它不需要的接口 | 实现了用不到的方法（空实现或抛异常） |
-| CRP 合成/聚合复用 | 优先使用组合/聚合，而非继承来复用功能 | 子类数量爆炸、继承层次过深、改父类影响所有子类 |
+| SRP Single Responsibility | A class should have only one reason to change | One class doing multiple unrelated things |
+| OCP Open-Closed | Open for extension, closed for modification | Every new feature requires modifying existing code |
+| LSP Liskov Substitution | Subclasses must be substitutable for their base classes | Subclass override breaks parent contract |
+| DIP Dependency Inversion | Depend on abstractions, not concretions | High-level module directly `new`s low-level module |
+| LoD Law of Demeter | Talk only to your immediate friends | `a.getB().getC().doD()` chain calls |
+| ISP Interface Segregation | Don't force clients to depend on interfaces they don't use | Empty implementations or throwing `UnsupportedOperationException` |
+| CRP Composite Reuse | Favor composition/aggregation over inheritance | Subclass explosion, deep hierarchy, changing parent breaks children |
 
 ---
 
 ## Pattern Reference
 
-### 创建型模式 (Creational)
+### Creational Patterns
 
-| 模式 | 一句话 | 生活类比 | 代码信号 |
+| Pattern | One-liner | Real-world Analogy | Code Signal |
 |---|---|---|---|
-| 简单工厂 Simple Factory | 用一个工厂类根据参数创建不同产品 | 超市货架 — 你告诉收银员要什么，她给你拿 | 客户端传入类型参数，工厂返回对应实例 |
-| 工厂方法 Factory Method | 定义创建接口，让子类决定实例化哪个类 | 老板说"招人"，HR知道去哪招、怎么招 | 抽象类中有 `abstract create()` 方法 |
-| 抽象工厂 Abstract Factory | 提供创建一系列相关对象的接口 | 跨国餐厅 — 中餐/西餐各一套 | 多个 `createXxx()` 方法返回同一产品族 |
-| 单例 Singleton | 保证唯一实例并提供全局访问点 | 一个国家只能有一个主席 | `private` 构造 + `static getInstance()` |
-| 建造者 Builder | 将复杂对象的构建与表示分离 | 套餐汉堡 — 标准流程，不同搭配 | Director 指挥 Builder 的 build 步骤 |
-| 原型 Prototype | 通过复制现有实例来创建新对象 | 细胞分裂 — 复制自己产生新个体 | `clone()` 方法，深拷贝 vs 浅拷贝 |
+| Simple Factory | Factory class creates different products based on parameter | Supermarket shelf — tell the cashier what you want | Client passes type parameter, factory returns instance |
+| Factory Method | Define creation interface, let subclasses decide which class to instantiate | Boss says "hire someone", HR knows where and how | Abstract class has `abstract create()` method |
+| Abstract Factory | Interface for creating families of related objects | Multi-national restaurant — Chinese kitchen / Western kitchen each produce a full set | Multiple `createXxx()` methods returning same product family |
+| Singleton | Ensure only one instance exists with a global access point | A nation can only have one president | `private` constructor + `static getInstance()` |
+| Builder | Separate construction of a complex object from its representation | Meal combo — standard process, different combinations | Director orchestrates Builder's build steps |
+| Prototype | Create new objects by copying an existing instance | Cell division — copy yourself to produce a new individual | `clone()` method, deep copy vs shallow copy |
 
-### 结构型模式 (Structural)
+### Structural Patterns
 
-| 模式 | 一句话 | 生活类比 | 代码信号 |
+| Pattern | One-liner | Real-world Analogy | Code Signal |
 |---|---|---|---|
-| 适配器 Adapter | 将一个接口转换成客户期望的另一个接口 | 电源转接头 — 两孔变三孔 | 包装已有类，实现目标接口 |
-| 桥接 Bridge | 将抽象与实现分离，使它们独立变化 | 手机品牌 × 手机软件 — 两个独立维度 | 两个维度的继承体系通过组合连接 |
-| 组合 Composite | 将对象组合成树形结构，统一处理个体和整体 | 公司组织架构 — 部门包含子部门和员工 | `add(child)` + 递归 `operation()` |
-| 装饰 Decorator | 动态地给对象添加额外职责 | 手机配件 — 壳+膜+挂件，任意组合叠加 | 包装同类接口，层层嵌套，每层增加职责 |
-| 外观 Facade | 为子系统提供统一的高层接口 | 基金 — 你买基金，基金经理操盘股票 | 一个门面类封装多个子系统调用 |
-| 享元 Flyweight | 共享细粒度对象以节省内存 | 围棋棋子 — 黑白各只需一个实例 | 分离内部状态(共享)和外部状态(传入) |
-| 代理 Proxy | 为其他对象提供代理以控制访问 | 房产中介 — 你看房通过中介，不直接找房东 | 与真实对象实现同一接口，持有其引用 |
+| Adapter | Convert one interface into another the client expects | Power plug adapter — two-pin to three-pin | Wraps existing class, implements target interface |
+| Bridge | Decouple abstraction from implementation so both can vary independently | Phone brand × phone software — two independent dimensions | Two inheritance hierarchies connected via composition |
+| Composite | Compose objects into tree structures to treat individual and uniform objects uniformly | Company org chart — departments contain sub-departments and employees | `add(child)` + recursive `operation()` |
+| Decorator | Dynamically attach additional responsibilities to an object | Phone accessories — case + screen protector + charm, freely composable | Wraps same interface, each layer adds responsibility |
+| Facade | Provide a unified high-level interface to a subsystem | Mutual fund — you buy the fund, the manager handles stocks | One facade class encapsulates multiple subsystem calls |
+| Flyweight | Share fine-grained objects to save memory | Go stones — black and white each need only one instance | Separate internal state (shared) from external state (passed in) |
+| Proxy | Provide a surrogate to control access to another object | Real estate agent — you view houses through the agent, not directly | Same interface as real object, holds a reference to it |
 
-### 行为型模式 (Behavioral)
+### Behavioral Patterns
 
-| 模式 | 一句话 | 生活类比 | 代码信号 |
+| Pattern | One-liner | Real-world Analogy | Code Signal |
 |---|---|---|---|
-| 职责链 Chain of Responsibility | 将请求沿链传递，直到有对象处理 | 医院转院 — 县→市→省→国家级 | 链表结构，每个节点决定处理或转发 |
-| 命令 Command | 将请求封装为对象 | 遥控器 — 按钮对应命令，可撤销、排队 | `Command` 接口 + `execute()` / `undo()` |
-| 解释器 Interpreter | 定义语言的文法并解释执行 | 乐谱 — 音符是语法，演奏是解释 | 递归下降，`interpret()` 方法 |
-| 迭代器 Iterator | 提供顺序访问聚合对象元素的方法 | 广播员点名 — 不管队列怎么排，按名单一个个来 | `hasNext()` + `next()` 接口 |
-| 中介者 Mediator | 用中介对象封装多个对象之间的交互 | 机场塔台 — 飞机间不直接通信，通过塔台协调 | 中介者持有所有同事引用；同事通过中介者通信 |
-| 备忘录 Memento | 在不破坏封装的前提下保存和恢复对象状态 | 游戏存档 — 随时存、随时读 | `Memento` 对象 + `Caretaker` 管理 |
-| 观察者 Observer | 一对多依赖，对象状态变化时通知所有观察者 | 报纸订阅 — 报社发报，订户自动收到 | `Subject` 维护 `Observer` 列表，`notify()` |
-| 状态 State | 允许对象在内部状态改变时改变行为 | 工作状态 — 上午精力充沛，下午犯困 | 状态对象持有 context 引用，可切换状态 |
-| 策略 Strategy | 定义算法族，封装起来互相替换 | 出行方式 — 公交/地铁/打车，到达同一目的地 | `Strategy` 接口 + Context 持有策略引用 |
-| 模板方法 Template Method | 定义算法骨架，子类实现具体步骤 | 做菜流程固定(洗切炒)，具体菜品不同 | 抽象类中 `templateMethod()` 调用 `abstract step()` |
-| 访问者 Visitor | 在不修改元素类的前提下定义新操作 | 公司年终考核 — 考核方式可换，员工结构不变 | `element.accept(visitor)` + `visitor.visit(this)` |
+| Chain of Responsibility | Pass a request along a chain of handlers until one handles it | Hospital referral — county → city → province → national | Linked list structure, each node decides to handle or forward |
+| Command | Encapsulate a request as an object | Remote control — button maps to command, supports undo/queue | `Command` interface with `execute()` / `undo()` |
+| Interpreter | Define a grammar and interpret sentences in the language | Sheet music — notes are grammar, playing is interpretation | Recursive descent, `interpret()` method |
+| Iterator | Provide sequential access to elements of an aggregate without exposing its internals | Roll call — regardless of queue order, go through the list one by one | `hasNext()` + `next()` interface |
+| Mediator | Encapsulate how a set of objects interact with each other | Airport control tower — planes don't talk directly, tower coordinates | Mediator holds all colleague references; colleagues communicate through mediator |
+| Memento | Capture and restore an object's internal state without violating encapsulation | Game save — save anytime, load anytime | `Memento` object + `Caretaker` managing it |
+| Observer | One-to-many dependency — when one object changes state, all dependents are notified | Newspaper subscription — publisher sends, subscribers automatically receive | `Subject` maintains `Observer` list, `notify()` |
+| State | Allow an object to alter its behavior when its internal state changes | Work energy — sharp in morning, sluggish after lunch, slacking at night | State object holds context reference, can switch state |
+| Strategy | Define a family of algorithms, encapsulate each one, make them interchangeable | Commute — bus / subway / taxi, same destination | `Strategy` interface + Context holds strategy reference |
+| Template Method | Define the skeleton of an algorithm, defer some steps to subclasses | Cooking process — wash, chop, fry is fixed; the dish varies | Abstract class with `templateMethod()` calling `abstract step()` |
+| Visitor | Represent an operation to be performed on elements of an object structure without changing the classes | Annual performance review — review method (visitor) can change, employee structure stays | `element.accept(visitor)` calls `visitor.visit(this)` |
 
 ---
 
-## 内置对比指南
+## Built-in Comparison Guides
 
 ### Strategy vs State
 
-| 维度 | Strategy (策略) | State (状态) |
+| Dimension | Strategy | State |
 |---|---|---|
-| 核心意图 | 封装可互换的算法 | 根据内部状态改变行为 |
-| 状态切换 | 客户端主动选择策略 | 对象内部自动切换状态 |
-| 策略/状态是否知道彼此 | 策略之间互相不知道 | 状态之间通常知道并可触发切换 |
-| Context 角色 | Context 只使用策略 | Context 的行为随状态变化 |
-| 代码信号 | `context.setStrategy(new X())` | `state.handle(context)` 内部切换 |
-| 生活类比 | 出行方式 — 你选公交还是打车 | 工作状态 — 上午精力充沛，下午犯困 |
+| Core intent | Encapsulate interchangeable algorithms | Change behavior based on internal state |
+| State switching | Client actively selects strategy | Object internally auto-switches state |
+| Do strategies/states know each other? | Strategies don't know each other | States usually know each other and can trigger transitions |
+| Context role | Context only uses the strategy | Context's behavior changes with state |
+| Code signal | `context.setStrategy(new X())` | `state.handle(context)` internal switch |
+| Real-world analogy | Commute — you choose bus or taxi | Work energy — sharp in morning, sluggish after lunch |
 
-**决策指南**：变化来自外部（用户选择、配置）→ Strategy；变化来自内部（状态转移）→ State
+**Decision guide**: Change comes from external (user choice, config) → Strategy; change comes from internal (state transition) → State
 
 ```
-你的场景中，变化来自哪里？
-├── 外部（用户选择/配置/策略切换）→ Strategy
-├── 内部（对象自身状态转移）→ State
-└── 不确定 → 问：状态转移后，对象的行为会自动改变吗？
-    ├── 是 → State
-    └── 否 → Strategy
+Where does the change come from?
+├── External (user choice / config / strategy switching) → Strategy
+├── Internal (object's own state transition) → State
+└── Unsure → Ask: after a state transition, does the object's behavior change automatically?
+    ├── Yes → State
+    └── No → Strategy
 ```
 
 ### Factory Method vs Abstract Factory
 
-| 维度 | Factory Method (工厂方法) | Abstract Factory (抽象工厂) |
+| Dimension | Factory Method | Abstract Factory |
 |---|---|---|
-| 核心意图 | 让子类决定创建哪个产品 | 创建一系列相关产品族 |
-| 工厂数量 | 每个产品一个工厂方法 | 一个工厂创建多个产品 |
-| 扩展方式 | 新增产品 = 新增工厂子类 | 新增产品族 = 新增工厂类 |
-| 代码信号 | 单个 `create()` 方法 | 多个 `createX()` 方法 |
-| 生活类比 | 老板说"招人"，HR知道去哪招 | 跨国餐厅 — 中餐/西餐各一套 |
-| 复杂度 | 较低 | 较高 |
+| Core intent | Let subclasses decide which product to create | Create families of related products |
+| Factory count | One factory method per product | One factory creates multiple products |
+| Extension | New product = new factory subclass | New product family = new factory class |
+| Code signal | Single `create()` method | Multiple `createX()` methods |
+| Real-world analogy | Boss says "hire someone", HR knows how | Multi-national restaurant — Chinese/Western each a full set |
+| Complexity | Lower | Higher |
 
-**决策指南**：只有一种产品需要创建 → Factory Method；需要创建一组相关产品 → Abstract Factory
+**Decision guide**: Only one product type to create → Factory Method; need a set of related products → Abstract Factory
 
 ```
-你需要创建的对象：
-├── 只有一种类型，但具体类需要灵活决定 → Factory Method
-├── 有多种相关类型，需要保证它们属于同一产品族 → Abstract Factory
-└── 不确定 → 问：创建的对象之间有关联吗？（如：MySQL连接+MySQL命令）
-    ├── 有关联 → Abstract Factory
-    └── 无关 → Factory Method
+What are you creating?
+├── One type, but the concrete class needs to be flexible → Factory Method
+├── Multiple related types that must belong to the same product family → Abstract Factory
+└── Unsure → Ask: are the created objects related? (e.g., MySQL connection + MySQL command)
+    ├── Related → Abstract Factory
+    └── Unrelated → Factory Method
 ```
 
 ### Proxy vs Decorator vs Adapter
 
-| 维度 | Proxy (代理) | Decorator (装饰) | Adapter (适配器) |
+| Dimension | Proxy | Decorator | Adapter |
 |---|---|---|---|
-| 核心意图 | 控制访问 | 增强功能 | 接口转换 |
-| 是否改变接口 | 不改变 | 不改变 | 改变（适配为新接口） |
-| 是否持有原对象引用 | 是 | 是 | 是 |
-| 谁创建原对象 | 通常由外部注入或内部创建 | 客户端层层包装 | 适配器内部持有被适配者 |
-| 代码信号 | 同接口，方法中加控制逻辑 | 同接口，方法中增加功能 | 实现目标接口，内部调用被适配者 |
-| 生活类比 | 房产中介 — 控制你看房的权限 | 手机壳+膜+挂件 — 叠加功能 | 电源转接头 — 两孔变三孔 |
+| Core intent | Control access | Add functionality | Convert interface |
+| Changes interface? | No | No | Yes (adapts to new interface) |
+| Holds reference to original? | Yes | Yes | Yes |
+| Who creates the original? | Usually injected externally or internally | Client wraps layer by layer | Adapter internally holds the adaptee |
+| Code signal | Same interface, adds control logic | Same interface, adds functionality | Implements target interface, internally calls adaptee |
+| Real-world analogy | Real estate agent — controls your viewing access | Phone case + protector + charm — stacking features | Power plug adapter — two-pin to three-pin |
 
-**决策指南**：
+**Decision guide**:
 
 ```
-你的需求是什么？
-├── 想控制访问（延迟加载/权限校验/缓存）→ Proxy
-├── 想增强功能（日志/加密/格式转换）→ Decorator
-├── 想兼容旧接口（接口不匹配）→ Adapter
-└── 不确定 → 问：你是否需要改变接口？
-    ├── 需要改变接口 → Adapter
-    └── 不需要 → 问：目的是控制访问还是增加功能？
-        ├── 控制访问 → Proxy
-        └── 增加功能 → Decorator
+What do you need?
+├── Control access (lazy loading / auth / caching) → Proxy
+├── Add functionality (logging / encryption / formatting) → Decorator
+├── Adapt an incompatible interface → Adapter
+└── Unsure → Ask: do you need to change the interface?
+    ├── Need to change interface → Adapter
+    └── No → Ask: is the goal access control or adding features?
+        ├── Access control → Proxy
+        └── Adding features → Decorator
 ```
 
 ### Observer vs Mediator
 
-| 维度 | Observer (观察者) | Mediator (中介者) |
+| Dimension | Observer | Mediator |
 |---|---|---|
-| 核心意图 | 一对多通知 | 多对多协调 |
-| 通信方式 | 目标主动推送通知 | 通过中介者转发消息 |
-| 对象关系 | 观察者只知道目标 | 同事只知道中介者 |
-| 代码信号 | `Subject.notify()` 遍历观察者列表 | `Mediator.relay()` 协调多个同事 |
-| 生活类比 | 报纸订阅 — 报社发报，订户收到 | 机场塔台 — 飞机间通过塔台协调 |
+| Core intent | One-to-many notification | Many-to-many coordination |
+| Communication | Subject pushes notifications | Mediator forwards messages |
+| Object relationship | Observers only know the subject | Colleagues only know the mediator |
+| Code signal | `Subject.notify()` iterates observer list | `Mediator.relay()` coordinates multiple colleagues |
+| Real-world analogy | Newspaper subscription — publisher sends, subscribers receive | Airport control tower — planes coordinate through tower |
 
-**决策指南**：一对多通知 → Observer；多对象间复杂交互 → Mediator
+**Decision guide**: One-to-many notification → Observer; complex interaction between multiple objects → Mediator
 
 ### Composite vs Decorator
 
-| 维度 | Composite (组合) | Decorator (装饰) |
+| Dimension | Composite | Decorator |
 |---|---|---|
-| 核心意图 | 树形结构，统一处理个体和整体 | 动态添加职责 |
-| 结构 | 树形（包含子节点） | 链式（包装同类型） |
-| 代码信号 | `add(child)` + 递归 `operation()` | 包装同类接口，层层嵌套 |
-| 生活类比 | 公司组织架构 — 部门包含子部门 | 手机配件 — 壳+膜+挂件 |
+| Core intent | Tree structure, treat individual and whole uniformly | Dynamically add responsibilities |
+| Structure | Tree (contains child nodes) | Chain (wraps same type) |
+| Code signal | `add(child)` + recursive `operation()` | Wraps same interface, layer by layer |
+| Real-world analogy | Company org chart — departments contain sub-departments | Phone accessories — case + protector + charm |
 
-**决策指南**：需要树形结构统一处理 → Composite；需要动态叠加功能 → Decorator
+**Decision guide**: Need tree structure with uniform treatment → Composite; need dynamic feature stacking → Decorator
 
 ### Strategy vs Template Method
 
-| 维度 | Strategy (策略) | Template Method (模板方法) |
+| Dimension | Strategy | Template Method |
 |---|---|---|
-| 核心意图 | 封装可互换的算法 | 定义算法骨架，子类实现步骤 |
-| 实现方式 | 组合（Context 持有 Strategy） | 继承（子类覆盖父类方法） |
-| 灵活性 | 运行时可切换 | 编译时确定 |
-| 代码信号 | `context.setStrategy(new X())` | `abstract step()` 在子类中实现 |
-| 生活类比 | 出行方式 — 选公交还是打车 | 做菜流程 — 洗切炒固定，菜品不同 |
+| Core intent | Encapsulate interchangeable algorithms | Define algorithm skeleton, subclasses implement steps |
+| Implementation | Composition (Context holds Strategy) | Inheritance (subclass overrides parent method) |
+| Flexibility | Runtime switchable | Determined at compile time |
+| Code signal | `context.setStrategy(new X())` | `abstract step()` implemented in subclasses |
+| Real-world analogy | Commute — choose bus or taxi | Cooking — wash/chop/fry fixed, dish varies |
 
-**决策指南**：需要运行时切换算法 → Strategy；算法骨架固定，只有部分步骤可变 → Template Method
+**Decision guide**: Need runtime algorithm switching → Strategy; algorithm skeleton is fixed, only some steps vary → Template Method
 
 ### Command vs Strategy
 
-| 维度 | Command (命令) | Strategy (策略) |
+| Dimension | Command | Strategy |
 |---|---|---|
-| 核心意图 | 封装请求为对象，支持撤销/排队 | 封装算法，支持互换 |
-| 关注点 | "做什么" — 请求的封装 | "怎么做" — 算法的封装 |
-| 是否有状态 | 通常有（可保存、可撤销） | 通常无状态 |
-| 代码信号 | `execute()` + `undo()` | `algorithm()` 纯计算 |
-| 生活类比 | 遥控器按钮 — 按下执行，可撤销 | 出行方式 — 选择路线 |
+| Core intent | Encapsulate request as object, support undo/queue | Encapsulate algorithm, support swapping |
+| Focus | "What to do" — request encapsulation | "How to do it" — algorithm encapsulation |
+| Stateful? | Usually yes (saveable, undoable) | Usually stateless |
+| Code signal | `execute()` + `undo()` | `algorithm()` pure computation |
+| Real-world analogy | Remote control button — press to execute, can undo | Commute — choose a route |
 
-**决策指南**：需要撤销/排队/日志记录 → Command；只需要算法互换 → Strategy
+**Decision guide**: Need undo/queue/logging → Command; just need algorithm swapping → Strategy
 
 ---
 
-## 常见模式组合
+## Common Pattern Combinations
 
-| 组合 | 场景 | 说明 |
+| Combination | Scenario | Why |
 |---|---|---|
-| Strategy + Factory Method | 需要动态切换算法，且算法创建逻辑复杂 | 工厂负责创建策略对象，客户端不直接 new |
-| Observer + Mediator | 多对象间有复杂的交互关系 | Mediator 管理交互逻辑，Observer 处理一对多通知 |
-| Composite + Iterator | 树形结构需要遍历 | Iterator 提供统一的遍历方式，不暴露内部结构 |
-| Decorator + Factory Method | 需要动态组合多种增强功能 | 工厂负责组装装饰器链 |
-| Command + Memento | 需要支持撤销操作 | Command 封装操作，Memento 保存状态快照 |
-| Strategy + Observer | 算法可切换，且切换时需要通知其他对象 | Strategy 封装算法，Observer 在切换时发出通知 |
-| Abstract Factory + Singleton | 全局只需要一个工厂实例 | 工厂本身是单例，保证产品族的一致性 |
-| Facade + Mediator | 子系统复杂，需要统一入口 + 内部协调 | Facade 对外简化接口，Mediator 对内协调组件 |
+| Strategy + Factory Method | Dynamic algorithm switching with complex creation logic | Factory creates strategy objects, client doesn't `new` directly |
+| Observer + Mediator | Complex interactions between many objects | Mediator manages interaction logic, Observer handles one-to-many notification |
+| Composite + Iterator | Tree structure needs traversal | Iterator provides uniform traversal without exposing internals |
+| Decorator + Factory Method | Dynamic composition of multiple enhancements | Factory assembles the decorator chain |
+| Command + Memento | Need undo support | Command encapsulates the operation, Memento saves state snapshots |
+| Strategy + Observer | Algorithm is swappable and switching needs to notify others | Strategy encapsulates algorithm, Observer notifies on switch |
+| Abstract Factory + Singleton | Only one factory instance needed globally | Factory itself is a singleton, ensuring product family consistency |
+| Facade + Mediator | Complex subsystem needs unified entry + internal coordination | Facade simplifies external interface, Mediator coordinates internal components |
 
 ---
 
-## 模式关系地图
+## Pattern Relationship Map
 
 ```
                     ┌─────────────────────────────────────────────┐
-                    │           创建型 (Creational)                │
+                    │           Creational                         │
                     │                                             │
                     │   Simple Factory ──→ Factory Method          │
                     │         │                   │               │
@@ -433,7 +433,7 @@ Generate a scenario-based quiz:
                                         │
                                         ▼
                     ┌─────────────────────────────────────────────┐
-                    │           结构型 (Structural)                │
+                    │           Structural                         │
                     │                                             │
                     │   Adapter ←──→ Proxy ←──→ Decorator         │
                     │       │                       │             │
@@ -444,7 +444,7 @@ Generate a scenario-based quiz:
                                         │
                                         ▼
                     ┌─────────────────────────────────────────────┐
-                    │           行为型 (Behavioral)                │
+                    │           Behavioral                         │
                     │                                             │
                     │   Strategy ←──→ State ←──→ Template Method  │
                     │       │                                       │
@@ -456,40 +456,39 @@ Generate a scenario-based quiz:
                     │   Iterator    Visitor    Interpreter          │
                     └─────────────────────────────────────────────┘
 
-关系说明:
-  ──→ 演化关系 (Simple Factory 是 Factory Method 的简化版)
-  ←──→ 高频混淆对 (需要重点区分)
-  │    垂直方向: 从简单到复杂的进阶关系
+Legend:
+  ──→  Evolution (Simple Factory is a simplified Factory Method)
+  ←──→ Commonly confused pair (needs explicit distinction)
+  │    Vertical = simple to complex progression
 ```
 
 ---
 
-## 反模式与过度设计警告
+## Anti-patterns and Over-design Warnings
 
-### 什么时候不该用设计模式
+### When NOT to Use Design Patterns
 
-| 场景 | 建议 |
+| Scenario | Advice |
 |---|---|
-| 代码只有 1-2 种实现，且短期内不会变化 | 直接用 if-else，不要引入工厂 |
-| 类只有一个方法，且职责单一 | 不需要拆分，SRP 已满足 |
-| 对象间只有简单的调用关系 | 不需要中介者，直接调用即可 |
-| 只需要保存一个状态快照 | 直接用变量保存，不需要备忘录模式 |
-| 遍历简单数组/列表 | 用 for-each，不需要迭代器模式 |
+| Code has only 1-2 implementations, unlikely to change soon | Use plain if-else, don't introduce a factory |
+| Class has only one method with a single responsibility | No need to split — SRP is already satisfied |
+| Objects have simple direct calls | No mediator needed, just call directly |
+| Only need to save one state snapshot | Use a plain variable, no need for Memento |
+| Iterating a simple array/list | Use for-each, no need for Iterator pattern |
 
-### 过度设计的信号
+### Signs of Over-design
 
-1. 引入模式后代码行数反而增加 50% 以上
-2. 模式结构中的某个角色只有一个实现（如只有一个 Strategy 子类）
-3. 为了"以后可能需要"而引入模式，但当前场景完全不需要
-4. 团队成员无法理解你的设计，需要反复解释
+1. Code size increases by 50%+ after introducing the pattern
+2. A pattern role has only one concrete implementation (e.g., only one Strategy subclass)
+3. Introducing a pattern "for future needs" that don't exist yet
+4. Team members can't understand your design and need repeated explanations
 
 ---
 
 ## Hard Rules
 
-1. **直接给结果。** 不需要引导用户思考，直接诊断问题、给出修复代码。
-2. **原则优先。** 先指出违反了什么原则，再推荐模式。
-3. **中英双语。** 模式名：中文名（English Name）。
-4. **区分易混淆模式。** Strategy vs State, Factory Method vs Abstract Factory, Proxy vs Decorator — 主动说明为什么选这个而不是那个。
-5. **不要过度设计。** 如果代码不需要模式，直接说"当前写法没有问题"。过度设计信号：引入模式后代码行数增加 50%+；模式角色只有一个实现。
-6. **提供完整重构代码。** 不要只给骨架，要给可运行的代码。
+1. **Give results directly.** No Socratic questioning — diagnose the problem and provide the fix.
+2. **Principles first.** Name the violated principle before recommending a pattern.
+3. **Distinguish similar patterns.** Strategy vs State, Factory Method vs Abstract Factory, Proxy vs Decorator — always explain why this one and not that one.
+4. **Don't over-design.** If the code doesn't need a pattern, say "current approach is fine". Over-design signal: code grows 50%+ after introducing the pattern; a pattern role has only one implementation.
+5. **Provide complete refactored code.** Not just a skeleton — give runnable code.
