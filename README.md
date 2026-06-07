@@ -68,15 +68,61 @@ Paste any code or describe a design problem, and the skill will:
 
 ## Installation
 
-Copy `.claude/skills/design-pattern-coach/` to your project or global Claude skills directory:
+This skill is compatible with **Claude Code**, **Cursor**, **Cline**, **Roo Code**, and **GitHub Copilot**.
+
+### Claude Code
 
 ```bash
-# Global installation
+# Global (available in all projects)
 cp -r .claude/skills/design-pattern-coach ~/.claude/skills/
 
-# Or project-level installation
+# Or project-level
 cp -r .claude/skills/design-pattern-coach your-project/.claude/skills/
 ```
+
+Then use `/design-pattern-coach` in any conversation.
+
+### Cursor
+
+```bash
+# Global
+cp -r .cursor/skills/design-pattern-coach ~/.cursor/skills/
+
+# Or project-level (already included in this repo)
+# .cursor/skills/design-pattern-coach/SKILL.md
+# .cursor/rules/design-pattern-coach.mdc
+```
+
+The `.cursor/rules/` file auto-activates for code files. The skill loads on-demand when you mention design patterns.
+
+### Cline / Roo Code
+
+```bash
+# Copy .clinerules to your project root
+cp .clinerules your-project/.clinerules
+```
+
+The rules are automatically loaded into every conversation.
+
+### GitHub Copilot
+
+```bash
+# Copy instructions to your project
+cp -r .github your-project/.github
+```
+
+The instructions in `.github/copilot-instructions.md` are automatically loaded.
+
+### File Overview
+
+| Agent | File | Format | Auto-load? |
+|---|---|---|---|
+| Claude Code | `.claude/skills/design-pattern-coach/SKILL.md` | YAML frontmatter + markdown | On-demand (`/design-pattern-coach`) |
+| Cursor | `.cursor/skills/design-pattern-coach/SKILL.md` | YAML frontmatter + markdown | On-demand |
+| Cursor | `.cursor/rules/design-pattern-coach.mdc` | `.mdc` with globs | Auto for code files |
+| Cline | `.clinerules` | Plain markdown | Auto in every conversation |
+| Roo Code | `.clinerules` | Plain markdown | Auto in every conversation |
+| Copilot | `.github/copilot-instructions.md` | Plain markdown | Auto in every conversation |
 
 ## References
 

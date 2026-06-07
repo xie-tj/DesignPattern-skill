@@ -68,15 +68,61 @@
 
 ## 安装使用
 
-将 `.claude/skills/design-pattern-coach/` 目录复制到你的项目或全局 Claude skills 目录：
+兼容 **Claude Code**、**Cursor**、**Cline**、**Roo Code**、**GitHub Copilot**。
+
+### Claude Code
 
 ```bash
-# 全局安装
+# 全局安装（所有项目可用）
 cp -r .claude/skills/design-pattern-coach ~/.claude/skills/
 
 # 或项目级安装
 cp -r .claude/skills/design-pattern-coach your-project/.claude/skills/
 ```
+
+在对话中使用 `/design-pattern-coach` 调用。
+
+### Cursor
+
+```bash
+# 全局
+cp -r .cursor/skills/design-pattern-coach ~/.cursor/skills/
+
+# 或项目级（本仓库已包含）
+# .cursor/skills/design-pattern-coach/SKILL.md
+# .cursor/rules/design-pattern-coach.mdc
+```
+
+`.cursor/rules/` 文件对代码文件自动激活，SKILL.md 按需加载。
+
+### Cline / Roo Code
+
+```bash
+# 将 .clinerules 复制到项目根目录
+cp .clinerules your-project/.clinerules
+```
+
+规则自动加载到每个对话中。
+
+### GitHub Copilot
+
+```bash
+# 将指令文件复制到项目
+cp -r .github your-project/.github
+```
+
+`.github/copilot-instructions.md` 中的指令自动加载。
+
+### 文件一览
+
+| Agent | 文件 | 格式 | 加载方式 |
+|---|---|---|---|
+| Claude Code | `.claude/skills/design-pattern-coach/SKILL.md` | YAML + markdown | 按需（`/design-pattern-coach`） |
+| Cursor | `.cursor/skills/design-pattern-coach/SKILL.md` | YAML + markdown | 按需 |
+| Cursor | `.cursor/rules/design-pattern-coach.mdc` | `.mdc` + globs | 代码文件自动触发 |
+| Cline | `.clinerules` | 纯 markdown | 每次对话自动加载 |
+| Roo Code | `.clinerules` | 纯 markdown | 每次对话自动加载 |
+| Copilot | `.github/copilot-instructions.md` | 纯 markdown | 每次对话自动加载 |
 
 ## 参考
 
