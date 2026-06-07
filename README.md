@@ -1,3 +1,5 @@
+[English](README_EN.md) | 中文
+
 # DesignPattern Skill
 
 基于《大话设计模式》的 Claude Code 设计模式教练 Skill，用于诊断代码中的设计模式问题并提供重构方案。
@@ -6,7 +8,7 @@
 
 ```
 ├── .claude/skills/design-pattern-coach/
-│   └── SKILL.md                 # Skill 主文件
+│   └── SKILL.md                 # Skill 主文件（英文）
 ├── reference/
 │   └── 设计模式.md               # 《大话设计模式》完整内容（源材料）
 ├── SKILL.md                     # Skill 主文件（根目录副本）
@@ -35,9 +37,9 @@
 ### Skill 特点
 
 - **直接诊断，不废话**：分析代码 → 指出问题 → 给出修复代码
-- **中英双语**：模式名统一为 `中文名（English Name）` 格式
 - **区分易混淆模式**：主动说明为什么选这个而不是那个
 - **完整重构代码**：不给骨架，给可运行的代码
+- **反过度设计**：当代码不需要模式时直接告知
 
 ## 安装使用
 
