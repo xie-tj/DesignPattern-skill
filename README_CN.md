@@ -2,13 +2,13 @@
 
 # DesignPattern Skill
 
-基于《大话设计模式》的 Claude Code 设计模式教练 Skill，用于诊断代码中的设计模式问题并提供重构方案。
+基于《大话设计模式》的 AI Agent 设计模式教练 Skill，用于诊断代码中的设计模式问题并提供重构方案。
 
 ## 关于
 
-这个 Skill 将你的 Claude Code 变成一个**设计模式助手**——分析代码、检测违反的 OO 原则、推荐合适的设计模式、并直接给出完整的重构代码。
+这个 Skill 将你的 AI 编程助手变成一个**设计模式助手**——分析代码、检测违反的 OO 原则、推荐合适的设计模式、并直接给出完整的重构代码。
 
-它源自程杰的《大话设计模式》，这是国内最畅销的编程书之一，京东 5 万+ 评论、98% 好评率。这本书通过故事化教学和代码迭代演进讲解 23 个 GoF 设计模式，本 Skill 将其教学方法提炼为可直接使用的 Claude Code Skill。
+它源自程杰的《大话设计模式》，这是国内最畅销的编程书之一，京东 5 万+ 评论、98% 好评率。这本书通过故事化教学和代码迭代演进讲解 23 个 GoF 设计模式，本 Skill 将其教学方法提炼为可直接使用的 Agent Skill。
 
 ### 它能做什么
 
@@ -29,15 +29,21 @@
 - 想通过真实代码学习设计模式，而不是看教科书
 - 怀疑代码过度设计了，想要个第二意见
 
-## 项目结构
+## 快速安装
 
+```bash
+npx skills add xie-tj/DesignPattern-skill --path skills/design-pattern-coach
 ```
-├── .claude/skills/design-pattern-coach/
-│   └── SKILL.md                 # Skill 主文件（英文）
-├── reference/
-│   └── 设计模式.md               # 《大话设计模式》完整内容（源材料）
-├── SKILL.md                     # Skill 主文件（根目录副本）
-└── README.md
+
+自动安装到你**所有的 AI Agent**（Claude Code、Cursor、Cline、Roo Code、Copilot 等 70+ 个）。
+
+在 Agent 终端中调用：
+
+```bash
+/design-pattern-coach <代码或场景>                # 诊断并修复
+/design-pattern-coach --mode=identify <代码>      # 识别代码中的模式
+/design-pattern-coach --mode=compare <A> <B>      # 对比两个模式
+/design-pattern-coach --mode=quiz                 # 练习测验
 ```
 
 ## Skill 功能
@@ -66,16 +72,16 @@
 - **完整重构代码**：不给骨架，给可运行的代码
 - **反过度设计**：当代码不需要模式时直接告知
 
-## 安装使用
+## 项目结构
 
-将 `.claude/skills/design-pattern-coach/` 目录复制到你的项目或全局 Claude skills 目录：
-
-```bash
-# 全局安装
-cp -r .claude/skills/design-pattern-coach ~/.claude/skills/
-
-# 或项目级安装
-cp -r .claude/skills/design-pattern-coach your-project/.claude/skills/
+```
+├── skills/
+│   └── design-pattern-coach/
+│       ├── SKILL.md                 # Skill 主文件
+│       └── references/
+│           └── 设计模式.md           # 源材料（《大话设计模式》）
+├── README.md                        # English
+└── README_CN.md                     # 中文
 ```
 
 ## 参考

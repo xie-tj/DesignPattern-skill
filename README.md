@@ -6,9 +6,9 @@ A Claude Code skill inspired by *Big Talk Design Patterns* (《大话设计模�
 
 ## About
 
-This skill turns your Claude Code into a **design pattern assistant** that can analyze your code, detect violations of OO principles, recommend the right design pattern, and provide complete refactored code — all in one step.
+This skill turns your AI coding agent into a **design pattern assistant** that can analyze your code, detect violations of OO principles, recommend the right design pattern, and provide complete refactored code — all in one step.
 
-It is built from the teaching methodology of *Big Talk Design Patterns* (《大话设计模式》) by Cheng Jie, one of the best-selling programming books in China with 100,000+ reader reviews and 98%+ positive rating. The book teaches all 23 GoF design patterns through storytelling and iterative code improvement, and this skill distills that approach into an actionable Claude Code skill.
+It is built from the teaching methodology of *Big Talk Design Patterns* (《大话设计模式》) by Cheng Jie, one of the best-selling programming books in China with 100,000+ reader reviews and 98%+ positive rating. The book teaches all 23 GoF design patterns through storytelling and iterative code improvement, and this skill distills that approach into an actionable agent skill.
 
 ### What it does
 
@@ -29,15 +29,21 @@ Paste any code or describe a design problem, and the skill will:
 - You want to learn design patterns through real code examples, not textbook theory
 - You suspect your code is over-designed and want a second opinion
 
-## Project Structure
+## Quick Start
 
+```bash
+npx skills add xie-tj/DesignPattern-skill --path skills/design-pattern-coach
 ```
-├── .claude/skills/design-pattern-coach/
-│   └── SKILL.md                 # Main skill file (English)
-├── reference/
-│   └── 设计模式.md               # Full text of《大话设计模式》(source material)
-├── SKILL.md                     # Skill file (root copy)
-└── README.md
+
+This automatically installs the skill for **all your AI agents** (Claude Code, Cursor, Cline, Roo Code, Copilot, and 70+ more).
+
+Then invoke in your agent terminal:
+
+```bash
+/design-pattern-coach <code or scenario>         # Diagnose and fix
+/design-pattern-coach --mode=identify <code>      # Detect patterns in code
+/design-pattern-coach --mode=compare <A> <B>      # Compare two patterns
+/design-pattern-coach --mode=quiz                 # Practice quiz
 ```
 
 ## Skill Features
@@ -66,16 +72,16 @@ Paste any code or describe a design problem, and the skill will:
 - **Complete refactored code**: Not just skeletons — runnable code
 - **Anti-over-design**: Tells you when patterns aren't needed
 
-## Installation
+## Project Structure
 
-Copy `.claude/skills/design-pattern-coach/` to your project or global Claude skills directory:
-
-```bash
-# Global installation
-cp -r .claude/skills/design-pattern-coach ~/.claude/skills/
-
-# Or project-level installation
-cp -r .claude/skills/design-pattern-coach your-project/.claude/skills/
+```
+├── skills/
+│   └── design-pattern-coach/
+│       ├── SKILL.md                 # Main skill file
+│       └── references/
+│           └── 设计模式.md           # Source material (Big Talk Design Patterns)
+├── README.md                        # English
+└── README_CN.md                     # 中文
 ```
 
 ## References
